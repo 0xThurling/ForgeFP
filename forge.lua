@@ -1,9 +1,9 @@
 return {
   project = {
-    name = "fp",
-    type = "executable",
+    name = "ForgeFP",
+    type = "library",
     standard = "20",
-    
+    install_headers = true
   },
   testing = false,
   dependencies = {

@@ -8,6 +8,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # --- Project Target ---
 file(GLOB_RECURSE SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src/*.cpp)
-add_executable(fp ${SOURCES})
+if(SOURCES)
+  add_library(forgefp STATIC ${SOURCES})
+  install(TARGETS forgefp EXPORT forgefpConfig DESTINATION lib)
+  target_include_directories(forgefp PUBLIC ${PROJECT_SOURCE_DIR}/include)
+  target_include_directories(forgefp PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
+else()
+  message(WARNING "No source files found in src/. Creating header-only INTERFACE library 'forgefp'.")
+  add_library(forgefp INTERFACE)
+  target_include_directories(forgefp INTERFACE ${PROJECT_SOURCE_DIR}/include)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
+endif()
 
 
