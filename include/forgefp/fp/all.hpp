@@ -1,0 +1,15 @@
+// include/fp/all.h
+#pragma once
+#include "adt.hpp"
+#include "combinators.hpp"
+#include "compose.hpp"
+#include "concurrent.hpp"
+#include "curry.hpp"
+#include "either.hpp"
+#include "maybe.hpp"
+#include "memoize.hpp"
+#include "result.hpp"
+#include "simd.hpp"
+#include "string.hpp"
+#include "validation.hpp"
+#include "vec.hpp"
