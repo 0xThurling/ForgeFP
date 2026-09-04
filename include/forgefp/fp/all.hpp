@@ -9,7 +9,6 @@
 #include "maybe.hpp"
 #include "memoize.hpp"
 #include "result.hpp"
-#include "simd.hpp"
 #include "string.hpp"
 #include "validation.hpp"
 #include "vec.hpp"
