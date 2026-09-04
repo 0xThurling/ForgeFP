@@ -12,4 +12,17 @@ template <class F, class... Bound> auto curry(F f, Bound... bound) {
     }
   };
 }
+
+template <class F> decltype(auto) uncurry_step(F f) { return std::move(f); }
+
+template <class F, class T, class... Ts>
+decltype(auto) uncurry_step(F f, T t, Ts... ts) {
+  return uncurry_step(std::move(f)(std::move(t)), std::move(ts)...);
+}
+
+template <class F> auto uncurry(F f) {
+  return [f = std::move(f)](auto &&...args) -> decltype(auto) {
+    return uncurry_step(f, std::forward<decltype(args)>(args)...);
+  };
+}
 } // namespace fp

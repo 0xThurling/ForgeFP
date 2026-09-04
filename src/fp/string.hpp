@@ -1,7 +1,6 @@
 #pragma once
 #include <algorithm>
 #include <cctype>
-#include <ranges>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -47,6 +46,18 @@ inline std::vector<std::string> split(std::string const &s, char delim) {
   return out;
 }
 
+inline std::vector<std::string> split(std::string const &s,
+                                      std::string const &delim) {
+  std::vector<std::string> out;
+  size_t start = 0, pos;
+  while ((pos = s.find(delim, start)) != std::string::npos) {
+    out.push_back(s.substr(start, pos - start));
+    start = pos + delim.size();
+  }
+  out.push_back(s.substr(start));
+  return out;
+}
+
 inline std::string join(std::vector<std::string> const &parts,
                         std::string const &sep) {
   std::string out;
@@ -57,5 +68,54 @@ inline std::string join(std::vector<std::string> const &parts,
     out += parts[i];
   }
   return out;
+}
+
+inline std::string strip_prefix(std::string s, std::string const &prefix) {
+  if (s.rfind(prefix, 0) == 0)
+    s.erase(0, prefix.size());
+  return s;
+}
+
+inline std::string strip_suffix(std::string s, std::string const &suffix) {
+  if (s.size() >= suffix.size() &&
+      s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0)
+    s.erase(s.size() - suffix.size());
+  return s;
+}
+
+inline std::string replace_all(std::string s, std::string const &from,
+                               std::string const &to) {
+  if (from.empty())
+    return s;
+  size_t pos = 0;
+  while ((pos = s.find(from, pos)) != std::string::npos) {
+    s.replace(pos, from.size(), to);
+    pos += to.size();
+  }
+  return s;
+}
+
+inline std::vector<std::string> lines(std::string const &s) {
+  return split(s, '\n');
+}
+
+inline std::string repeat(std::string const &s, size_t n) {
+  std::string out;
+  out.reserve(s.size() * n);
+  for (size_t i = 0; i < n; ++i)
+    out += s;
+  return out;
+}
+
+inline std::string pad_left(std::string s, size_t width, char c = ' ') {
+  if (s.size() < width)
+    s.insert(0, width - s.size(), c);
+  return s;
+}
+
+inline std::string pad_right(std::string s, size_t width, char c = ' ') {
+  if (s.size() < width)
+    s.append(width - s.size(), c);
+  return s;
 }
 } // namespace fp::str
