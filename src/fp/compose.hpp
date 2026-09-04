@@ -37,4 +37,11 @@ template <class T, class F> auto operator|(Piped<T> p, F f) {
     return Piped<T>{};
   }
 }
+
+template <class F> auto tap(F side_effect) {
+  return [side_effect](auto &&x) {
+    side_effect(x);
+    return std::forward<decltype(x)>(x);
+  };
+}
 } // namespace fp

@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <cctype>
 #include <ranges>
+#include <sstream>
 #include <string>
+#include <vector>
 
 namespace fp::str {
 inline std::string to_lower(std::string s) {
@@ -32,5 +34,28 @@ inline std::string trim_leading(std::string s, char c = ' ') {
 
 inline std::string trim(std::string s) {
   return trim_trailing(trim_leading(std::move(s)));
+}
+
+inline std::vector<std::string> split(std::string const &s, char delim) {
+  std::vector<std::string> out;
+  std::stringstream ss(s);
+  std::string item;
+
+  while (std::getline(ss, item, delim))
+    out.push_back(item);
+
+  return out;
+}
+
+inline std::string join(std::vector<std::string> const &parts,
+                        std::string const &sep) {
+  std::string out;
+  for (size_t i = 0; i < parts.size(); ++i) {
+    if (i) {
+      out += sep;
+    }
+    out += parts[i];
+  }
+  return out;
 }
 } // namespace fp::str
