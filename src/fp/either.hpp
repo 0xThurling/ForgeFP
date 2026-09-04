@@ -1,7 +1,9 @@
 #pragma once
+#include <optional>
 #include <type_traits>
 #include <utility>
 #include <variant>
+#include <vector>
 
 namespace fp {
 template <class E, class T> struct Either {
@@ -28,5 +30,60 @@ auto map(Either<E, T> const &e, F f) -> Either<E, std::invoke_result_t<F, T>> {
     return Either<E, R>::err(e.error());
 
   return Either<E, R>::ok(f(e.value()));
+}
+
+template <class E, class T, class F>
+auto and_then(Either<E, T> const &e, F f) -> std::invoke_result_t<F, T> {
+  using R = std::invoke_result_t<F, T>;
+
+  if (!e.is_ok())
+    return R::err(e.error());
+
+  return f(e.value());
+}
+
+template <class E, class T, class F> T or_else(Either<E, T> const &e, F f) {
+  return e.is_ok() ? e.value() : f(e.error());
+}
+
+template <class E, class T, class F>
+auto map_error(Either<E, T> const &e, F f)
+    -> Either<std::invoke_result_t<F, E>, T> {
+  using E2 = std::invoke_result_t<F, E>;
+
+  if (e.is_ok())
+    return Either<E2, T>::ok(e.value());
+
+  return Either<E2, T>::err(f(e.error()));
+}
+
+template <class E, class T>
+Either<E, T> flatten(Either<E, Either<E, T>> const &e) {
+  if (!e.is_ok())
+    return Either<E, T>::err(e.error());
+  return e.value();
+}
+
+template <class E, class T>
+std::optional<T> to_optional(Either<E, T> const &e) {
+  return e.is_ok() ? std::optional<T>(e.value()) : std::nullopt;
+}
+
+template <class E, class T>
+std::vector<T> rights(std::vector<Either<E, T>> const &es) {
+  std::vector<T> out;
+  for (auto const &e : es)
+    if (e.is_ok())
+      out.push_back(e.value());
+  return out;
+}
+
+template <class E, class T>
+std::vector<E> lefts(std::vector<Either<E, T>> const &es) {
+  std::vector<E> out;
+  for (auto const &e : es)
+    if (!e.is_ok())
+      out.push_back(e.error());
+  return out;
 }
 } // namespace fp
