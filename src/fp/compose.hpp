@@ -33,8 +33,8 @@ template <class T, class F> auto operator|(Piped<T> p, F f) {
   if constexpr (!std::is_same_v<R, void>) {
     return Piped<R>{f(std::move(p.value))};
   } else {
-    f(std::move(p.value));
-    return Piped<T>{};
+    f(p.value);
+    return Piped<T>{p.value};
   }
 }
 

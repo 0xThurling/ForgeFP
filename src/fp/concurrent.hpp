@@ -60,9 +60,13 @@ public:
         thr_([this] { this->loop(); }) {}
 
   ~actor() {
-    std::lock_guard lock(mu_);
-    running_ = false;
+    {
+      std::lock_guard lock(mu_);
+      running_ = false;
+    }
     cv_.notify_all();
+    if (thr_.joinable())
+      thr_.join();
   }
 
   void Send(Msg m) {

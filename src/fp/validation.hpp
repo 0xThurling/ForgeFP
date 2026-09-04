@@ -12,7 +12,7 @@ template <class T> Validation<T> valid(T t) {
 }
 
 template <class T> Validation<T> invalid(std::string msg) {
-  return Validation<T>::err(std::move(msg));
+  return Validation<T>::err(std::vector<std::string>{std::move(msg)});
 }
 
 template <class T> Validation<T> invalid(std::vector<std::string> msgs) {

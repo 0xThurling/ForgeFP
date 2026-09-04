@@ -17,14 +17,14 @@ template <class T, class F> void map_inplace(std::vector<T> &data, F f) {
     V chunk;
     chunk.copy_from(&data[i], std::experimental::element_aligned);
     chunk = f(chunk);
-    chunk = copy_to(&data[i], std::experimental::element_aligned);
+    chunk.copy_to(&data[i], std::experimental::element_aligned);
   }
 
   // Tail elements
   for (; i < n; ++i) {
     V v_single(data[i]);
     v_single = f(v_single);
-    v_single.copy_to(&data[i], std::experimental::element_aligned);
+    data[i] = v_single[0];
   }
 }
 } // namespace fp

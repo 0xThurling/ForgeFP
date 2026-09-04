@@ -44,7 +44,7 @@ template <class T> std::optional<T> head(std::vector<T> const &v) {
 template <class T, class F> auto partition(std::vector<T> const &v, F f) {
   std::vector<T> yes, no;
   for (auto const &x : v)
-    (pred(x) ? yes : no).push_back(x);
+    (f(x) ? yes : no).push_back(x);
   return std::pair{yes, no};
 }
 
@@ -71,7 +71,7 @@ template <class A, class B, class F>
 auto zip_with(std::vector<A> const &a, std::vector<B> const &b, F f) {
     std::vector<std::invoke_result_t<F, A, B>> out;
     auto n = std::min(a.size(), b.size());
-    out.resize(n);
+    out.reserve(n);
     for (size_t i = 0; i < n; ++i) out.push_back(f(a[i], b[i]));
     return out;
 }
