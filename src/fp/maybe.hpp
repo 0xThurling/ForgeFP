@@ -58,7 +58,13 @@ std::optional<std::vector<T>> collect(std::vector<std::optional<T>> const &os) {
   for (auto const &o : os) {
     if (!o)
       return std::nullopt;
+    out.push_back(*o);
   }
   return out;
+}
+
+template <class T, class F>
+T value_or_lazy(std::optional<T> const &o, F fallback) {
+  return or_else(o, std::move(fallback));
 }
 } // namespace fp

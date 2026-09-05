@@ -13,6 +13,9 @@ return {
   resources = {
     files = {}
   },
-  scripts = {},
+  scripts = {
+    ["bench"] = "bash scripts/run_bench.sh",
+    ["bench-pinned"] = "bash scripts/run_bench.sh 2"
+  },
   features = {}
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -85,5 +86,34 @@ std::vector<E> lefts(std::vector<Either<E, T>> const &es) {
     if (!e.is_ok())
       out.push_back(e.error());
   return out;
+}
+
+template <class E, class T, class F, class G>
+auto bimap(Either<E, T> const &e, F on_err, G on_ok)
+    -> Either<std::invoke_result<F, E>, std::invoke_result_t<G, T>> {
+  using E2 = std::invoke_result_t<F, E>;
+  using T2 = std::invoke_result_t<G, T>;
+  if (e.is_ok())
+    return Either<E2, T2>::ok(e.value());
+  return Either<E2, T2>::err(on_err(e.error()));
+}
+
+template <class E, class T> Either<T, E> swap(Either<E, T> const &e) {
+  if (e.is_ok()) {
+    return Either<T, E>::err(e.value());
+  }
+  return Either<T, E>::ok(e.error());
+}
+
+template <class E, class T>
+T const &expect(Either<E, T> const &e, char const *msg) {
+  if (!e.is_ok())
+    throw std::runtime_error(msg);
+  return e.value();
+}
+
+template <class E, class T>
+Either<E, T> ok_or(std::optional<T> const &o, E error) {
+  return o ? Either<E, T>::ok(*o) : Either<E, T>::err(std::move(error));
 }
 } // namespace fp
